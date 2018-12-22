@@ -1,0 +1,57 @@
+#weather-container {
+    margin-top: 30px;
+}
+
+#helper-info {
+    font-size: 14px;
+    font-style: italic;
+}
+
+#weather-days-grid {
+    display: grid;
+    display: -ms-grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    -ms-grid-columns: 200px 1fr 200px 1fr 200px 1fr 200px 1fr 200px 1fr 200px;
+    width: 975px;
+    grid-gap: 15px;
+    margin-bottom: 5px;
+}
+
+#weather-days-grid:nth-child(1) {
+	-ms-grid-column: 1;
+	-ms-grid-row: 1;
+}
+
+#weather-days-grid:nth-child(2) {
+	-ms-grid-column: 3;
+	-ms-grid-row: 1;
+}
+
+#weather-days-grid:nth-child(3) {
+	-ms-grid-column: 5;
+	-ms-grid-row: 1;
+}
+
+#weather-days-grid:nth-child(4) {
+	-ms-grid-column: 7;
+	-ms-grid-row: 1;
+}
+
+#weather-days-grid:nth-child(5) {
+	-ms-grid-column: 9;
+	-ms-grid-row: 1;
+}
+
+#weather-days-grid:nth-child(6) {
+	-ms-grid-column: 11;
+	-ms-grid-row: 1;
+}
+
+#weather-hours-grid {
+    display: grid;
+    display: -ms-grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    -ms-grid-columns: 200px 1fr 200px 1fr 200px 1fr 200px 1fr 200px 1fr 200px 1fr 200px 1fr 200px;
+    width: 800px;
+    grid-gap: 15px;
+}

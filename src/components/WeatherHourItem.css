@@ -1,0 +1,29 @@
+.hour-item {
+    width: 100px;
+    height: auto;
+    text-align: center;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    background-color: #e3e9ed;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.day-of-week {
+    margin: 0;
+}
+
+.weather-icon-hour {
+    width: 100px;
+    height: 100px;
+}
+
+.temps {
+    margin: 0;
+}
+
+.hour-temp {
+    font-weight: bold;
+}
