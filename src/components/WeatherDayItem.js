@@ -6,6 +6,7 @@ class WeatherDayItem extends Component {
         super(props)
         this.updateStateFromProps = this.updateStateFromProps.bind(this);
         this.handleClick = this.handleClick.bind(this);
+        this.handleMouseEnter = this.handleMouseEnter.bind(this);
 
         // set expected properties in the state -- will be filled in by updateStateFromProps after initial render
         this.state = {
@@ -15,8 +16,10 @@ class WeatherDayItem extends Component {
             avgTemp: "",
             maxTemp: "",
             minTemp: "",
+            humidity: "",
+            pressure: "",
             weatherType: "Clear",
-            weatherIcon: ""
+            weatherDescription: "clear sky"
         }
     }
 
@@ -35,20 +38,31 @@ class WeatherDayItem extends Component {
         // make sure we aren't getting a dummy call -- handle bad request
         if (props.dataArray.length > 0) {
             // sum temp, temp_max, and temp_min -- will use for constructing averages
-            var sums = [0,0,0];
+            var sums = {
+                temp: 0,
+                temp_max: 0,
+                temp_min: 0,
+                humidity: 0,
+                pressure: 0
+            }
             for (var obj in props.dataArray) {
-                sums[0] += props.dataArray[obj].main.temp;
-                sums[1] += props.dataArray[obj].main.temp_max;
-                sums[2] += props.dataArray[obj].main.temp_min;
+                sums.temp += props.dataArray[obj].main.temp;
+                sums.temp_max += props.dataArray[obj].main.temp_max;
+                sums.temp_min += props.dataArray[obj].main.temp_min;
+                sums.humidity += props.dataArray[obj].main.humidity;
+                sums.pressure += props.dataArray[obj].main.pressure;
             }
             this.setState({
                 date: new Date(props.dataArray[0].dt_txt.substring(0,10)), // date object
                 dateNum: parseInt(props.dataArray[0].dt_txt.substring(8,11)), // i.e. 14 for September 14th
                 dayOfWeek: (new Date(props.dataArray[0].dt_txt.substring(0,10))).toString().substring(0,3), // i.e. Mon for Monday December 17th
-                avgTemp: Math.round((sums[0] / props.dataArray.length)), // average temperature over the 8 given hours
-                maxTemp: Math.round((sums[1] / props.dataArray.length)), // average high temperature over the 8 given hours
-                minTemp: Math.round((sums[2] / props.dataArray.length)), // average low temperature over the 8 given hours
-                weatherType: props.dataArray[Math.floor(props.dataArray.length / 2)].weather[0].main
+                avgTemp: Math.round((sums.temp / props.dataArray.length)), // average temperature over the 8 given hours
+                maxTemp: Math.round((sums.temp_max / props.dataArray.length)), // average high temperature over the 8 given hours
+                minTemp: Math.round((sums.temp_min / props.dataArray.length)), // average low temperature over the 8 given hours
+                humidity: Math.round((sums.humidity / props.dataArray.length)),
+                pressure: Math.round((sums.pressure / props.dataArray.length)),
+                weatherType: props.dataArray[Math.floor(props.dataArray.length / 2)].weather[0].main,
+                weatherDescription: props.dataArray[Math.floor(props.dataArray.length / 2)].weather[0].description
             });
         }
         // if there was a bad request or dummy data, set each value of the state to "Error"
@@ -62,9 +76,13 @@ class WeatherDayItem extends Component {
         this.props.handleClick(this.props.dataArray);
     }
 
+    handleMouseEnter() {
+        this.props.handleMouseEnter(this.state)
+    }
+
     render() {
         return (
-            <div className="day-item" onClick={this.handleClick}>
+            <div className="day-item" onClick={this.handleClick} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave}>
                 <p className="day-of-week">{this.state.dayOfWeek + " " + this.state.dateNum.toString()}</p>
                 <img src={require("../assets/weather/active/" + this.state.weatherType + ".png")} className="weather-icon-day" alt={this.state.weatherType}></img>
                 <p className="day-weather">{this.state.weatherType}</p>

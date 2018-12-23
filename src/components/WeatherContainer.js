@@ -8,11 +8,17 @@ class WeatherContainer extends Component {
         super(props)
         this.updateStateFromProps = this.updateStateFromProps.bind(this);
         this.handleDayClick = this.handleDayClick.bind(this);
+        this.handleDayMouseEnter = this.handleDayMouseEnter.bind(this);
+        this.handleHourMouseEnter = this.handleHourMouseEnter.bind(this);
+        this.handleWeatherHoverMouseClick = this.handleWeatherHoverMouseClick.bind(this);
+
+        this.weatherHoverArea = React.createRef();
 
         // hold collections of WeatherDayItem and WeatherHourItem objects
         this.state = {
             weatherDayItems: [],
-            weatherHourItems: []
+            weatherHourItems: [],
+            weatherHover: []
         }
     }
 
@@ -35,6 +41,7 @@ class WeatherContainer extends Component {
                 <p id="helper-info">Hover over each day for more information or click for an hourly report.</p>
                 <div id="weather-days-grid">{this.state.weatherDayItems}</div>
                 <div id="weather-hours-grid">{this.state.weatherHourItems}</div>
+                <div id="weather-hover-area" ref={this.weatherHoverArea} onClick={this.handleWeatherHoverMouseClick}>{this.state.weatherHover}</div>
             </div>
         );
     }
@@ -62,7 +69,7 @@ class WeatherContainer extends Component {
 
         // for each collection of a day, create a WeatherDayItem and pass it that collection
         for (var arr in dateObjects) {
-            weatherDayItems.push(<WeatherDayItem dataArray={dateObjects[arr]} location={props.dataArray.city.name} handleClick={this.handleDayClick} key={arr} />);
+            weatherDayItems.push(<WeatherDayItem dataArray={dateObjects[arr]} location={props.dataArray.city.name} handleClick={this.handleDayClick} handleMouseEnter={this.handleDayMouseEnter} handleMouseLeave={this.handleDayMouseLeave} key={arr} />);
         }
 
         // update the state with the new day items and clear out all hour items (since we have new day data)
@@ -78,7 +85,7 @@ class WeatherContainer extends Component {
         var newArray = [];
 
         for (var i in dataArray) {
-            newArray.push(<WeatherHourItem obj={dataArray[i]} key={i} />)
+            newArray.push(<WeatherHourItem obj={dataArray[i]} handleMouseEnter={this.handleHourMouseEnter} handleMouseLeave={this.handleDayMouseLeave} key={i} />)
         }
 
         // check to see if the user clicked the same day as before
@@ -104,6 +111,49 @@ class WeatherContainer extends Component {
             });
         }
     }
+
+    handleDayMouseEnter(state) {
+        var newComponents = [];
+
+        newComponents.push(<p key={0} className="datestring">{state.date.toString().substring(0,15)}</p>)
+        newComponents.push(<p key={1} >{state.weatherDescription.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ')}</p>)
+        newComponents.push(<p key={2}>{"High: " + state.maxTemp + "°F"}</p>)
+        newComponents.push(<p key={3}>{"Low: " + state.minTemp + "°F"}</p>)
+        newComponents.push(<p key={4}>{"Humidity: " + state.humidity + "%"}</p>)
+        newComponents.push(<p key={5}>{"Pressure: " + state.pressure + " hPa"}</p>)
+
+        this.weatherHoverArea.current.style.backgroundColor = "#e3e9ed";
+
+        this.setState({
+            weatherHover: newComponents
+        })
+    }
+
+    handleHourMouseEnter(obj) {
+        var newComponents = [];
+
+        newComponents.push(<p key={0} className="datestring">{obj.date.toString().substring(0,15) + " " + obj.time12}</p>)
+        newComponents.push(<p key={1} >{obj.weatherDescription.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ')}</p>)
+        newComponents.push(<p key={2}>{"High: " + obj.maxTemp + "°F"}</p>)
+        newComponents.push(<p key={3}>{"Low: " + obj.minTemp + "°F"}</p>)
+        newComponents.push(<p key={4}>{"Humidity: " + obj.humidity + "%"}</p>)
+        newComponents.push(<p key={5}>{"Pressure: " + obj.pressure + " hPa"}</p>)
+
+        this.weatherHoverArea.current.style.backgroundColor = "#e3e9ed";
+
+        this.setState({
+            weatherHover: newComponents
+        })
+    }
+
+    handleWeatherHoverMouseClick() {
+        this.weatherHoverArea.current.style.backgroundColor = "white";
+
+        this.setState({
+            weatherHover: []
+        })
+    }
+
 }
 
 export default WeatherContainer;

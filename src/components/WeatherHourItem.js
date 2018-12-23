@@ -5,6 +5,7 @@ class WeatherHourItem extends Component {
     constructor(props) {
         super(props)
         this.updateStateFromProps = this.updateStateFromProps.bind(this);
+        this.handleMouseEnter = this.handleMouseEnter.bind(this);
 
         // set expected properties in the state -- will be filled in by updateStateFromProps after initial render
         this.state = {
@@ -13,7 +14,8 @@ class WeatherHourItem extends Component {
             temp: 0,
             maxTemp: 0,
             minTemp: 0,
-            weatherType: "Clear"
+            weatherType: "Clear",
+            weatherDescription: "clear sky"
         }
     }
 
@@ -56,7 +58,12 @@ class WeatherHourItem extends Component {
                 time: props.obj.dt_txt.substring(11,16), // in 24-hour format
                 time12: time12, // in 12-hour format
                 temp: Math.round(parseInt(props.obj.main.temp)), // temperature
-                weatherType: props.obj.weather[0].main // i.e. Clear, Snow, etc. -- also used to get image
+                maxTemp: Math.round(parseInt(props.obj.main.temp_max)),
+                minTemp: Math.round(parseInt(props.obj.main.temp_min)),
+                humidity: props.obj.main.humidity,
+                pressure: props.obj.main.pressure,
+                weatherType: props.obj.weather[0].main, // i.e. Clear, Snow, etc. -- also used to get image
+                weatherDescription: props.obj.weather[0].description
             });
         }
         // if no object, set everything to error
@@ -65,9 +72,13 @@ class WeatherHourItem extends Component {
         }
     }
 
+    handleMouseEnter() {
+        this.props.handleMouseEnter(this.state)
+    }
+
     render() {
         return (
-            <div className="hour-item">
+            <div className="hour-item" onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave}>
                 <p className="hour">{this.state.time12}</p>
                 <img src={require("../assets/weather/active/" + this.state.weatherType + ".png")} className="weather-icon-hour" alt={this.state.weatherType}></img>
                 <p className="hour-weather">{this.state.weatherType}</p>
