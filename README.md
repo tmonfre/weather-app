@@ -17,10 +17,10 @@ This website displays a real-time weather forecast for any city or zip code in t
 - Make sure to use node version 10.12
   - `nvm use 10.12`
 #### Project:
-- Clone repository `git clone https://github.com/tmonfre/weather-app/`
+- Clone the repository `git clone https://github.com/tmonfre/weather-app/`
 - Make sure you are on the branch master
 - Navigate to the project folder `weather-app/`
-- 
+
 #### Available Scripts:
 ##### `npm start`
 
