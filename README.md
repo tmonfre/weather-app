@@ -11,15 +11,16 @@ This website displays a real-time weather forecast for any city or zip code in t
 ### Installation:
 #### Tools:
 - You will need node in order to build, run and develop this project
-- I recommend installing node via a version manager such as nvm
+- I recommend installing node via a version manager such as nvm:
   - `curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash`
 - See the following [repository](https://github.com/creationix/nvm) for more information.
-- Make sure to use node version 10.12
+- Make sure to use node version 10.12:
   - `nvm use 10.12`
 #### Project:
 - Clone the repository `git clone https://github.com/tmonfre/weather-app/`
 - Make sure you are on the branch master
 - Navigate to the project folder `weather-app/`
+- Run `yarn install`
 
 #### Available Scripts:
 ##### `npm start`
@@ -59,7 +60,7 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 - Production distributed code is contained in the `build/` directory
 #### Contents
 - Code constructing website pages is contained in `app/`
-  - `index.html` is homepage 
+  - `index.html` is homepage
   - `index.js` uses Ajax to create an HTTP GET request then builds the app starting with React component `<App />`
   - `components/` contains React class components and styles
   - `assets/` contains images and SVG files
