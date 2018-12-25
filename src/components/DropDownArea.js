@@ -32,6 +32,8 @@ class DropDownArea extends Component {
     handleLatLon() {
         // check if their location is available
         if (navigator.geolocation) {
+            this.currLocRef.current.innerHTML = "Finding Current Location...";
+            this.currLocRef.current.style.backgroundColor = "#3e95cd";
             // request the user's current location -- if successful set the current latitude and longitude, if unsuccessful make the button inactive
             navigator.geolocation.getCurrentPosition(this.setLatLon, this.handleLocationError);
         }
@@ -43,6 +45,8 @@ class DropDownArea extends Component {
 
     // tell the App component that we are intending to query by latitude and longitude then update the latitude and longitude
     setLatLon(position) {
+        this.currLocRef.current.innerHTML = "Current Location";
+        this.currLocRef.current.style.backgroundColor = "#f1f1f1";
         this.props.setQueryState("lat-lon");
         this.props.updateLatLon(position.coords.latitude, position.coords.longitude);
     }
