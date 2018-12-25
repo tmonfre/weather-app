@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import './WeatherContainer.css';
 import WeatherDayItem from './WeatherDayItem.js';
 import WeatherHourItem from './WeatherHourItem.js';
+import {Line} from 'react-chartjs-2';
+require("datejs");
 
 class WeatherContainer extends Component {
     constructor(props) {
@@ -14,11 +16,22 @@ class WeatherContainer extends Component {
 
         this.weatherHoverArea = React.createRef();
 
-        // hold collections of WeatherDayItem and WeatherHourItem objects
+        // initial expectations for objects rendered on screen
         this.state = {
-            weatherDayItems: [],
-            weatherHourItems: [],
-            weatherHover: []
+            weatherDayItems: [], // react components for days
+            weatherHourItems: [], // react components for hours
+            weatherHover: [], // specific information about a day rendered on hover
+            chartData: {
+                labels: [],
+                datasets: [
+                    {
+                        data: [],
+                        label: "Forecasted Temperature",
+                        borderColor: "#3e95cd",
+                        fill: false
+                    }
+                ]
+            } // used for chartjs line chart
         }
     }
 
@@ -42,6 +55,9 @@ class WeatherContainer extends Component {
                 <div id="weather-days-grid">{this.state.weatherDayItems}</div>
                 <div id="weather-hours-grid">{this.state.weatherHourItems}</div>
                 <div id="weather-hover-area" ref={this.weatherHoverArea} onClick={this.handleWeatherHoverMouseClick}>{this.state.weatherHover}</div>
+                <div id="chartjs-container">
+                    <Line data={this.state.chartData}/>
+                </div>
             </div>
         );
     }
@@ -51,8 +67,19 @@ class WeatherContainer extends Component {
         // construct helper variables
         var date = "";
         var index = -1;
-        var dateObjects = [];
-        var weatherDayItems = [];
+        var dateObjects = []; // group items in the dataArray based on if they are in the same day
+        var weatherDayItems = []; // collection of react components
+        var chartData = {
+            labels: [],
+            datasets: [
+                {
+                    data: [],
+                    label: "Forecasted Temperature",
+                    borderColor: "#3e95cd",
+                    fill: false
+                }
+            ]
+        } // used for chartjs line chart
 
         // collect elements of the dataArray based on date -- i.e. keep all hours of the day together
         for (var obj in props.dataArray.list) {
@@ -65,6 +92,14 @@ class WeatherContainer extends Component {
                 dateObjects[index] = [];
                 dateObjects[index].push(props.dataArray.list[obj]);
             }
+
+            // add to the line chart's label if we haven't yet found this day
+            if (!chartData.labels.includes(Date.parse(props.dataArray.list[obj].dt_txt).toString().substring(0,10))) {
+                chartData.labels.push(Date.parse(props.dataArray.list[obj].dt_txt).toString().substring(0,10));
+            }
+
+            // add the temperature to the line chart
+            chartData.datasets[0].data.push(props.dataArray.list[obj].main.temp);
         }
 
         // for each collection of a day, create a WeatherDayItem and pass it that collection
@@ -75,17 +110,49 @@ class WeatherContainer extends Component {
         // update the state with the new day items and clear out all hour items (since we have new day data)
         this.setState({
             weatherDayItems: weatherDayItems,
-            weatherHourItems: []
+            weatherHourItems: [],
+            chartData: chartData
         });
     }
 
     // when user clicks a weatherDayItem, add WeatherHourItem objects based on that day
-    // TODO: figure out how to handle user wanting it to go away
     handleDayClick(dataArray) {
-        var newArray = [];
+        var newArray = []; // new collection of weather hour items
+        var chartData = {
+            labels: [],
+            datasets: [
+                {
+                    data: [],
+                    label: "Forecasted Temperature",
+                    borderColor: "#3e95cd",
+                    fill: false
+                }
+            ]
+        } // used for chartjs line chart
 
+        // for each item in the array, add a weather hour item and add the temperature to the chart
         for (var i in dataArray) {
             newArray.push(<WeatherHourItem obj={dataArray[i]} handleMouseEnter={this.handleHourMouseEnter} handleMouseLeave={this.handleDayMouseLeave} key={i} />)
+
+            // format the time
+            var time = parseInt(Date.parse(dataArray[i].dt_txt).toString("H"));
+
+            if (time === 0) {
+                time = "12AM"
+            }
+            else if (time < 12) {
+                time = time.toString() + "AM";
+            }
+            else if (time === 12) {
+                time = time.toString() + "PM";
+            }
+            else if (time > 12) {
+                time = (time - 12).toString() + "PM";
+            }
+
+            // add the time to the line chart's label and graph the temperature
+            chartData.labels.push(time);
+            chartData.datasets[0].data.push(dataArray[i].main.temp);
         }
 
         // check to see if the user clicked the same day as before
@@ -98,20 +165,25 @@ class WeatherContainer extends Component {
             }
         }
 
-        // if user requested same day and hours as before, don't show any hours
+        // if user requested same day and hours as before, don't show any hours and refresh the chart
         if (match) {
             this.setState({
                 weatherHourItems: []
+            }, () => {
+                this.updateStateFromProps(this.props);
             });
         }
 
+        // otherwise, add specific day items and change chart to be hourly
         else {
             this.setState({
-                weatherHourItems: newArray
+                weatherHourItems: newArray,
+                chartData: chartData
             });
         }
     }
 
+    // if the user hovers over a day, give specific information about the weather for that day
     handleDayMouseEnter(state) {
         var newComponents = [];
 
@@ -129,6 +201,7 @@ class WeatherContainer extends Component {
         })
     }
 
+    // if the user hovers over an hour, give specific information about the weather for that hour
     handleHourMouseEnter(obj) {
         var newComponents = [];
 
@@ -146,6 +219,7 @@ class WeatherContainer extends Component {
         })
     }
 
+    // if the user clicks on the hover area, make it go away
     handleWeatherHoverMouseClick() {
         this.weatherHoverArea.current.style.backgroundColor = "white";
 
