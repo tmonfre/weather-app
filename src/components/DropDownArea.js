@@ -8,7 +8,11 @@ class DropDownArea extends Component {
         this.handleLatLon = this.handleLatLon.bind(this);
         this.setLatLon = this.setLatLon.bind(this);
         this.handleLocationError = this.handleLocationError.bind(this);
+        this.setImperial = this.setImperial.bind(this);
+        this.setMetric = this.setMetric.bind(this);
         this.currLocRef = React.createRef();
+        this.imperial = React.createRef();
+        this.metric = React.createRef();
     }
     // holding container for city name and zip code inputs
     render() {
@@ -23,6 +27,9 @@ class DropDownArea extends Component {
                     <DropDownMenu updateFunction={this.props.updateZipCode} defaultValue={this.props.defaultZip} searchType="Zip Code" setQueryState={this.props.setQueryState} />
                 </div>
                 <button id="curr-location-button" onClick={this.handleLatLon} ref={this.currLocRef}>Current Location</button>
+                <div id="units-area">
+                    <h3><span id="imperial" onClick={this.setImperial} ref={this.imperial}>°F</span> <span id="metric" onClick={this.setMetric} ref={this.metric}>°C</span></h3>
+                </div>
                 <div style={{clear: "both"}}></div>
 			</div>
         );
@@ -55,6 +62,22 @@ class DropDownArea extends Component {
     handleLocationError() {
         this.currLocRef.current.innerHTML = "Cannot Access Current Location";
         this.currLocRef.current.style.backgroundColor = "#ffb3b3";
+    }
+
+    setImperial() {
+        this.imperial.current.style.fontWeight = "bold";
+        this.metric.current.style.fontWeight = "normal";
+        this.imperial.current.style.color = "#3e95cd";
+        this.metric.current.style.color = "black";
+        this.props.changeUnits("imperial")
+    }
+
+    setMetric() {
+        this.imperial.current.style.fontWeight = "normal";
+        this.metric.current.style.fontWeight = "bold";
+        this.imperial.current.style.color = "black";
+        this.metric.current.style.color = "#3e95cd";
+        this.props.changeUnits("metric")
     }
 }
 

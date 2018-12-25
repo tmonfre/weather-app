@@ -75,3 +75,13 @@
     width: 1007px;
     height: 300px;
 }
+
+#toggle-graph {
+    margin-bottom: 20px;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+#toggle-graph:hover {
+    text-decoration: underline;
+}

@@ -82,7 +82,7 @@ class WeatherHourItem extends Component {
                 <p className="hour">{this.state.time12}</p>
                 <img src={require("../assets/weather/active/" + this.state.weatherType + ".png")} className="weather-icon-hour" alt={this.state.weatherType}></img>
                 <p className="hour-weather">{this.state.weatherType}</p>
-                <p className="hour-temp">{this.state.temp + "°F"}</p>
+                <p className="hour-temp">{this.state.temp + this.props.unitsText}</p>
             </div>
         );
     }

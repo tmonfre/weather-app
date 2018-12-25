@@ -13,8 +13,11 @@ class WeatherContainer extends Component {
         this.handleDayMouseEnter = this.handleDayMouseEnter.bind(this);
         this.handleHourMouseEnter = this.handleHourMouseEnter.bind(this);
         this.handleWeatherHoverMouseClick = this.handleWeatherHoverMouseClick.bind(this);
+        this.toggleGraph = this.toggleGraph.bind(this);
 
         this.weatherHoverArea = React.createRef();
+        this.toggleGraphText = React.createRef();
+        this.chartContainer = React.createRef();
 
         // initial expectations for objects rendered on screen
         this.state = {
@@ -31,7 +34,8 @@ class WeatherContainer extends Component {
                         fill: false
                     }
                 ]
-            } // used for chartjs line chart
+            }, // used for chartjs line chart
+            chartActive: true // does the user want to see the chart
         }
     }
 
@@ -47,6 +51,18 @@ class WeatherContainer extends Component {
         }
     }
 
+    // show or hide the chart based on if the user wants to see it or not
+    componentDidUpdate() {
+        if (this.state.chartActive) {
+            this.chartContainer.current.children[0].style.display = "block";
+            this.chartContainer.current.children[1].style.display = "block";
+        }
+        else {
+            this.chartContainer.current.children[0].style.display = "none";
+            this.chartContainer.current.children[1].style.display = "none";
+        }
+    }
+
     render() {
         return (
             <div id="weather-container">
@@ -55,8 +71,9 @@ class WeatherContainer extends Component {
                 <div id="weather-days-grid">{this.state.weatherDayItems}</div>
                 <div id="weather-hours-grid">{this.state.weatherHourItems}</div>
                 <div id="weather-hover-area" ref={this.weatherHoverArea} onClick={this.handleWeatherHoverMouseClick}>{this.state.weatherHover}</div>
-                <div id="chartjs-container">
+                <div id="chartjs-container" ref={this.chartContainer}>
                     <Line data={this.state.chartData}/>
+                    <p id="toggle-graph" onClick={this.toggleGraph} ref={this.toggleGraphText}>Hide Graph</p>
                 </div>
             </div>
         );
@@ -104,7 +121,7 @@ class WeatherContainer extends Component {
 
         // for each collection of a day, create a WeatherDayItem and pass it that collection
         for (var arr in dateObjects) {
-            weatherDayItems.push(<WeatherDayItem dataArray={dateObjects[arr]} location={props.dataArray.city.name} handleClick={this.handleDayClick} handleMouseEnter={this.handleDayMouseEnter} handleMouseLeave={this.handleDayMouseLeave} key={arr} />);
+            weatherDayItems.push(<WeatherDayItem dataArray={dateObjects[arr]} location={props.dataArray.city.name} handleClick={this.handleDayClick} handleMouseEnter={this.handleDayMouseEnter} handleMouseLeave={this.handleDayMouseLeave} unitsText={this.props.unitsText} key={arr} />);
         }
 
         // update the state with the new day items and clear out all hour items (since we have new day data)
@@ -132,7 +149,7 @@ class WeatherContainer extends Component {
 
         // for each item in the array, add a weather hour item and add the temperature to the chart
         for (var i in dataArray) {
-            newArray.push(<WeatherHourItem obj={dataArray[i]} handleMouseEnter={this.handleHourMouseEnter} handleMouseLeave={this.handleDayMouseLeave} key={i} />)
+            newArray.push(<WeatherHourItem obj={dataArray[i]} handleMouseEnter={this.handleHourMouseEnter} handleMouseLeave={this.handleDayMouseLeave} unitsText={this.props.unitsText} key={i} />)
 
             // format the time
             var time = parseInt(Date.parse(dataArray[i].dt_txt).toString("H"));
@@ -189,8 +206,8 @@ class WeatherContainer extends Component {
 
         newComponents.push(<p key={0} className="datestring">{state.date.toString().substring(0,15)}</p>)
         newComponents.push(<p key={1} >{state.weatherDescription.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ')}</p>)
-        newComponents.push(<p key={2}>{"High: " + state.maxTemp + "°F"}</p>)
-        newComponents.push(<p key={3}>{"Low: " + state.minTemp + "°F"}</p>)
+        newComponents.push(<p key={2}>{"High: " + state.maxTemp + this.props.unitsText}</p>)
+        newComponents.push(<p key={3}>{"Low: " + state.minTemp + this.props.unitsText}</p>)
         newComponents.push(<p key={4}>{"Humidity: " + state.humidity + "%"}</p>)
         newComponents.push(<p key={5}>{"Pressure: " + state.pressure + " hPa"}</p>)
 
@@ -207,8 +224,8 @@ class WeatherContainer extends Component {
 
         newComponents.push(<p key={0} className="datestring">{obj.date.toString().substring(0,15) + " " + obj.time12}</p>)
         newComponents.push(<p key={1} >{obj.weatherDescription.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ')}</p>)
-        newComponents.push(<p key={2}>{"High: " + obj.maxTemp + "°F"}</p>)
-        newComponents.push(<p key={3}>{"Low: " + obj.minTemp + "°F"}</p>)
+        newComponents.push(<p key={2}>{"High: " + obj.maxTemp + this.props.unitsText}</p>)
+        newComponents.push(<p key={3}>{"Low: " + obj.minTemp + this.props.unitsText}</p>)
         newComponents.push(<p key={4}>{"Humidity: " + obj.humidity + "%"}</p>)
         newComponents.push(<p key={5}>{"Pressure: " + obj.pressure + " hPa"}</p>)
 
@@ -226,6 +243,22 @@ class WeatherContainer extends Component {
         this.setState({
             weatherHover: []
         })
+    }
+
+    // toggle user wants to hide or show the chart
+    toggleGraph() {
+        if (this.state.chartActive) {
+            this.toggleGraphText.current.innerHTML = "Show Graph";
+            this.setState({
+                chartActive: false
+            });
+        }
+        else {
+            this.toggleGraphText.current.innerHTML = "Hide Graph";
+            this.setState({
+                chartActive: true
+            });
+        }
     }
 
 }

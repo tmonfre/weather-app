@@ -7,7 +7,7 @@ class App extends Component {
     constructor(props) {
           super(props);
 
-          // default state: Madison, WI
+          // default initial: Madison, WI
           this.state = {
               cityName: "Madison",
               countryCode: "us",
@@ -16,7 +16,9 @@ class App extends Component {
               lon: 89.4012,
               dataArray: [],
               url: "",
-              lastQueryType: "city-name"
+              lastQueryType: "city-name",
+              units: "imperial",
+              unitsText: "°F"
           }
 
           // bind this to below functions
@@ -26,6 +28,7 @@ class App extends Component {
           this.setCityName = this.setCityName.bind(this);
           this.setZipCode = this.setZipCode.bind(this);
           this.setLatLon = this.setLatLon.bind(this);
+          this.changeUnits = this.changeUnits.bind(this);
       }
 
       render() {
@@ -33,8 +36,8 @@ class App extends Component {
           return (
               <div className="app">
                   <NavBar />
-                  <DropDownArea updateCityName={this.setCityName} updateZipCode={this.setZipCode} updateLatLon={this.setLatLon} defaultCityName={this.state.cityName} defaultZip={this.state.zip} setQueryState={this.setQueryState} />
-                  <WeatherContainer dataArray={this.state.dataArray} queryType={lastQueryType} />
+                  <DropDownArea updateCityName={this.setCityName} updateZipCode={this.setZipCode} updateLatLon={this.setLatLon} defaultCityName={this.state.cityName} defaultZip={this.state.zip} setQueryState={this.setQueryState} changeUnits={this.changeUnits} />
+                  <WeatherContainer dataArray={this.state.dataArray} queryType={lastQueryType} unitsText={this.state.unitsText}/>
               </div>
           );
       }
@@ -46,7 +49,7 @@ class App extends Component {
 
       // update the api url and call fetchData
       setURL() {
-          var url = "http://api.openweathermap.org/data/2.5/forecast?";
+          var url = "https://api.openweathermap.org/data/2.5/forecast?";
 
           // change api parameters based on if user entered city name, zip code, or latitude/longitude
           if (this.state.lastQueryType === "city-name") {
@@ -60,7 +63,7 @@ class App extends Component {
           }
 
           // add api key and update the state
-          url += "&APPID=" + this.props.api_key + "&units=imperial";
+          url += "&APPID=" + this.props.api_key + "&units=" + this.state.units;
           this.setState({url: url}, () => {this.fetchData(this.state.url);}); // calls fetchData after state is set
       }
 
@@ -114,6 +117,26 @@ class App extends Component {
           xmlHttp.open("GET", url, true);
           xmlHttp.responseType = 'json';
           xmlHttp.send(null);
+      }
+
+      // change the temperature units we request from the api
+      changeUnits(type) {
+          if (type === "imperial") {
+              this.setState({
+                  units: "imperial",
+                  unitsText: "°F"
+              }, () => {
+                  this.setURL();
+              });
+          }
+          else {
+              this.setState({
+                  units: "metric",
+                  unitsText: "°C"
+              }, () => {
+                  this.setURL();
+              });
+          }
       }
 }
 

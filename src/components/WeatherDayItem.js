@@ -87,7 +87,7 @@ class WeatherDayItem extends Component {
                 <p className="day-of-week">{this.state.dayOfWeek + " " + this.state.dateNum.toString()}</p>
                 <img src={require("../assets/weather/active/" + this.state.weatherType + ".png")} className="weather-icon-day" alt={this.state.weatherType}></img>
                 <p className="day-weather">{this.state.weatherType}</p>
-                <p className="temps"><span className="max-temp">{this.state.maxTemp + "°F"}</span> <span className="min-temp">{this.state.minTemp + "°F"}</span></p>
+                <p className="temps"><span className="max-temp">{this.state.maxTemp + this.props.unitsText}</span> <span className="min-temp">{this.state.minTemp + this.props.unitsText}</span></p>
             </div>
         );
     }
