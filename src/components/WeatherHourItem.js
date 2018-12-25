@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './WeatherHourItem.css';
+require("datejs");
 
 class WeatherHourItem extends Component {
     constructor(props) {
@@ -9,7 +10,7 @@ class WeatherHourItem extends Component {
 
         // set expected properties in the state -- will be filled in by updateStateFromProps after initial render
         this.state = {
-            date: new Date("2018-12-21"),
+            date: Date.today(),
             time: "03:00",
             temp: 0,
             maxTemp: 0,
@@ -50,11 +51,10 @@ class WeatherHourItem extends Component {
             else {
                 time12 = (parseInt(props.obj.dt_txt.substring(11,13)) - 12).toString() + "PM";
             }
-
             // update the state
             this.setState({
-                date: new Date(props.obj.dt_txt), // date object
-                dayOfWeek: (new Date(props.obj.dt_txt.substring(0,10))).toString().substring(0,3), // i.e. Mon, Tue, Wed, etc.
+                date: Date.parse(props.obj.dt_txt), // date object
+                dayOfWeek: Date.parse(props.obj.dt_txt).toString().substring(0,3), // i.e. Mon, Tue, Wed, etc.
                 time: props.obj.dt_txt.substring(11,16), // in 24-hour format
                 time12: time12, // in 12-hour format
                 temp: Math.round(parseInt(props.obj.main.temp)), // temperature

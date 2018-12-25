@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './WeatherDayItem.css';
+require("datejs");
 
 class WeatherDayItem extends Component {
     constructor(props) {
@@ -53,9 +54,9 @@ class WeatherDayItem extends Component {
                 sums.pressure += props.dataArray[obj].main.pressure;
             }
             this.setState({
-                date: new Date(props.dataArray[0].dt_txt), // date object
-                dateNum: parseInt(new Date(props.dataArray[0].dt_txt).toString().substring(8,10)), // i.e. 14 for September 14th
-                dayOfWeek: new Date(props.dataArray[0].dt_txt).toString().substring(0,3), // i.e. Mon for Monday December 17th
+                date: Date.parse(props.dataArray[0].dt_txt), // date object
+                dateNum: parseInt(Date.parse(props.dataArray[0].dt_txt).toString().substring(8,10)), // i.e. 14 for September 14th
+                dayOfWeek: Date.parse(props.dataArray[0].dt_txt).toString().substring(0,3), // i.e. Mon for Monday December 17th
                 avgTemp: Math.round((sums.temp / props.dataArray.length)), // average temperature over the 8 given hours
                 maxTemp: Math.round((sums.temp_max / props.dataArray.length)), // average high temperature over the 8 given hours
                 minTemp: Math.round((sums.temp_min / props.dataArray.length)), // average low temperature over the 8 given hours
