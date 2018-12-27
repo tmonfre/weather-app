@@ -12,14 +12,14 @@ class DropDownMenu extends Component {
         // bind this
         this.selectText = this.selectText.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        // this.handleKeyPress = this.handleKeyPress.bind(this);
+        this.handleKeyPress = this.handleKeyPress.bind(this);
         this.submit = this.submit.bind(this);
     }
     // create input field for user to enter desired city name or desired zip code
     render() {
         return (
 			<div className="drop-down-menu">
-                <input className="input-text" type="text" name="fname" onClick={this.selectText} onChange={this.handleChange} onSubmit={this.props.updateFunction} value={this.state.searchString} ref={this.inputRef} ></input>
+                <input className="input-text" type="text" name="fname" onClick={this.selectText} onChange={this.handleChange} onKeyPress={this.handleKeyPress} onSubmit={this.props.updateFunction} value={this.state.searchString} ref={this.inputRef} ></input>
                 <button className="submit" onClick={this.submit} ref={this.submitRef}>Submit</button>
 			</div>
         );
@@ -42,12 +42,17 @@ class DropDownMenu extends Component {
         this.props.updateFunction(this.state.searchString);
     }
 
+    // allow the user to set the value of the input field
+    setValue(val) {
+        this.setState({searchString: val});
+    }
+
     // if user presses enter in the input field, click the submit button for them
-    // handleKeyPress() {
-    //     if (event.key == 'Enter') {
-    //         this.submitRef.current.click();
-    //     }
-    // }
+    handleKeyPress(event) {
+        if (event.key === 'Enter') {
+            this.submit();
+        }
+    }
 }
 
 export default DropDownMenu;

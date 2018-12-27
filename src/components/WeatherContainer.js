@@ -14,10 +14,12 @@ class WeatherContainer extends Component {
         this.handleHourMouseEnter = this.handleHourMouseEnter.bind(this);
         this.handleWeatherHoverMouseClick = this.handleWeatherHoverMouseClick.bind(this);
         this.toggleGraph = this.toggleGraph.bind(this);
+        this.handleAPIFailure = this.handleAPIFailure.bind(this);
 
         this.weatherHoverArea = React.createRef();
         this.toggleGraphText = React.createRef();
         this.chartContainer = React.createRef();
+        this.showingWeatherForRef = React.createRef();
 
         // initial expectations for objects rendered on screen
         this.state = {
@@ -29,7 +31,7 @@ class WeatherContainer extends Component {
                 datasets: [
                     {
                         data: [],
-                        label: "Forecasted Temperature",
+                        label: "Forecasted Temperature " + this.props.unitsText,
                         borderColor: "#3e95cd",
                         fill: false
                     }
@@ -66,7 +68,7 @@ class WeatherContainer extends Component {
     render() {
         return (
             <div id="weather-container">
-                <h2>{"Showing Weather for " + this.props.queryType}</h2>
+                <h2 ref={this.showingWeatherForRef}>{"Showing Weather for " + this.props.cityName}</h2>
                 <p id="helper-info">Hover over each day for more information or click for an hourly report.</p>
                 <div id="weather-days-grid">{this.state.weatherDayItems}</div>
                 <div id="weather-hours-grid">{this.state.weatherHourItems}</div>
@@ -91,7 +93,7 @@ class WeatherContainer extends Component {
             datasets: [
                 {
                     data: [],
-                    label: "Forecasted Temperature",
+                    label: "Forecasted Temperature " + this.props.unitsText,
                     borderColor: "#3e95cd",
                     fill: false
                 }
@@ -140,7 +142,7 @@ class WeatherContainer extends Component {
             datasets: [
                 {
                     data: [],
-                    label: "Forecasted Temperature",
+                    label: "Forecasted Temperature " + this.props.unitsText,
                     borderColor: "#3e95cd",
                     fill: false
                 }
@@ -259,6 +261,11 @@ class WeatherContainer extends Component {
                 chartActive: true
             });
         }
+    }
+
+    // if we cannot get data through the xml http request, notify the user
+    handleAPIFailure(requestedLocation) {
+        this.showingWeatherForRef.current.innerHTML = requestedLocation + " was not found";
     }
 
 }

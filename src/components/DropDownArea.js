@@ -10,6 +10,9 @@ class DropDownArea extends Component {
         this.handleLocationError = this.handleLocationError.bind(this);
         this.setImperial = this.setImperial.bind(this);
         this.setMetric = this.setMetric.bind(this);
+
+        this.cityNameRef = React.createRef();
+        this.zipCodeRef = React.createRef();
         this.currLocRef = React.createRef();
         this.imperial = React.createRef();
         this.metric = React.createRef();
@@ -20,11 +23,11 @@ class DropDownArea extends Component {
 			<div id="drop-down-area">
                 <div className="drop-down-menu">
                     <p>Enter City Name</p>
-                    <DropDownMenu updateFunction={this.props.updateCityName} defaultValue={this.props.defaultCityName} searchType="City Name" setQueryState={this.props.setQueryState} />
+                    <DropDownMenu updateFunction={this.props.updateCityName} defaultValue={this.props.defaultCityName} searchType="City Name" setQueryState={this.props.setQueryState} ref={this.cityNameRef}/>
                 </div>
                 <div className="drop-down-menu">
                     <p>Enter Zip Code</p>
-                    <DropDownMenu updateFunction={this.props.updateZipCode} defaultValue={this.props.defaultZip} searchType="Zip Code" setQueryState={this.props.setQueryState} />
+                    <DropDownMenu updateFunction={this.props.updateZipCode} defaultValue={this.props.defaultZip} searchType="Zip Code" setQueryState={this.props.setQueryState} ref={this.zipCodeRef}/>
                 </div>
                 <button id="curr-location-button" onClick={this.handleLatLon} ref={this.currLocRef}>Current Location</button>
                 <div id="units-area">
@@ -64,20 +67,34 @@ class DropDownArea extends Component {
         this.currLocRef.current.style.backgroundColor = "#ffb3b3";
     }
 
+    // use imperial temperature units (F)
     setImperial() {
         this.imperial.current.style.fontWeight = "bold";
         this.metric.current.style.fontWeight = "normal";
         this.imperial.current.style.color = "#3e95cd";
         this.metric.current.style.color = "black";
         this.props.changeUnits("imperial")
+        // SET COOKIE HERE
     }
 
+    // use metric temperature units (C)
     setMetric() {
         this.imperial.current.style.fontWeight = "normal";
         this.metric.current.style.fontWeight = "bold";
         this.imperial.current.style.color = "black";
         this.metric.current.style.color = "#3e95cd";
         this.props.changeUnits("metric")
+        // SET COOKIE HERE
+    }
+
+    // set the text of the input field
+    setCityNameText(val) {
+        this.cityNameRef.current.setValue(val);
+    }
+
+    // set the text of the zip code field
+    setZipCodeText(val) {
+        this.zipCodeRef.current.setValue(val);
     }
 }
 
