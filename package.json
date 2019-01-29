@@ -5,6 +5,7 @@
   "dependencies": {
     "chart.js": "^2.7.3",
     "datejs": "^1.0.0-rc3",
+    "dotenv": "^6.2.0",
     "react": "^16.7.0",
     "react-chartjs-2": "^2.7.4",
     "react-dom": "^16.7.0",
